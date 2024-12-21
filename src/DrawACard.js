@@ -31,24 +31,39 @@ function DrawACard() {
         // save the new card in the state
         setCurrentCard({val: cardData.value, suit: cardData.suit, img: cardData.image});
         setRemaining(res.data.remaining)
-    }
+    };
 
     // Function to reset game
     function reset() {
         setCurrentCard(InitialState);
         setRemaining(52);
         setDeckTrigger(!deckTrigger);
-        console.log("Game Reset. Trigger=", deckTrigger);
+        console.log("Game Reset with a new deck.");
+    };
+
+    // Function to shuffle the existing deck
+    async function shuffleDeck() {
+    const res = await axios.get(`https://deckofcardsapi.com/api/deck/${deckId}/shuffle/?deck_count=1`);
+    setCurrentCard(InitialState);
+    setRemaining(52);
+    console.log("Current deck reshuffled.");
     }
 
     return (
         <div>
         <h1>Drawing a Card</h1>
-
-        <p><button onClick={drawCard}>Draw a card</button></p>
+        <p><button onClick={shuffleDeck}>Shuffle Deck</button> </p>
+        {remaining !== 0 ? (
+        <p><button onClick={drawCard}>Draw a card</button></p>) : (
+            <p>No cards remaining!</p>
+        ) }
 
         <img src={currentCard.img} />
-        <h3>{currentCard.val} {currentCard.suit} </h3>
+        {currentCard.val !== "" ? (
+            <h3>{currentCard.val} of {currentCard.suit} </h3> 
+        ) : (<p>Click 'Draw a card' button above to start</p>)
+            }
+        
         <p>Remaining: {remaining}  / {52 - remaining}  : Drawn</p>
         <p><button onClick={reset}>Reset Game</button></p>
         </div>
